@@ -30,6 +30,12 @@ export const customContent = {
     url: "https://url-to-custom-content-here",
 };
 
+// whether to show the statistic tile below the departures/custom content
+// the tile content is defined in statistic.ts
+export const statistic = {
+    enabled: false,
+};
+
 // weather location and whether to show the sunset and sunrise inlined
 export const weatherConfig: WeatherConfig = {
     "latitude": 52.52,

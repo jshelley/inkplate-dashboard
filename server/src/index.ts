@@ -4,8 +4,9 @@ import path from "path";
 import * as puppeteer from "puppeteer";
 import sharp from 'sharp';
 import { getEventHtml } from "./calendar/calendarEvents";
-import { customContent } from "./config";
+import { customContent, statistic } from "./config";
 import { renderCustomContentHtml } from "./custom/customContent";
+import { getStatisticHtml } from "./statistic/statistic";
 import { getDepartureHtml } from "./departures/transportDepartures";
 import { getNewsHtml } from "./news/news";
 import { getBatteryIcon, getBatteryLevel, getDateString, getTime, getWeekDayString } from "./util";
@@ -45,6 +46,7 @@ export const render = async (req: Request, res: Response) => {
         try {
             const htmlTemplate = fs.readFileSync(dashboardViewPath, 'utf-8');
             const sidePaneHtml = customContent.enabled ? await renderCustomContentHtml() : await getDepartureHtml();
+            const statisticHtml = statistic.enabled ? await getStatisticHtml() : '';
             const weatherResponse = await getWeatherHtml();
             const sunriseSunsetHtml = await getSunriseSunsetHtml(weatherResponse.sunrise, weatherResponse.sunset);
             const eventHtml = await getEventHtml();
@@ -59,7 +61,8 @@ export const render = async (req: Request, res: Response) => {
                 .replace('{{EVENTS}}', eventHtml)
                 .replace('{{NEWS}}', newsHtml)
                 .replace('{{SIDEPANECONTENT}}', sidePaneHtml)
-                .replace('{{SIDEPANETITLE}}', customContent.enabled ? customContent.title : 'Departures');
+                .replace('{{SIDEPANETITLE}}', customContent.enabled ? customContent.title : 'Departures')
+                .replace('{{STATISTIC}}', statisticHtml);
             fs.writeFile(dashboardWritePath, html, (err) => {
                 if (err) {
                     console.error('Error writing HTML:', err);

@@ -22,6 +22,7 @@ This is a dashboard that displays the weather, news, your calendar events and ot
 - Combined calendar events from any `ical` URLs you specify
 - News or RSS feed items with images
 - Public transport departures for the lines you specify, or custom content in form of any website you want
+- Statistic tile with a single value fetched from any API you configure
 - Gallery mode with random picture selection
 
 ## How it works
@@ -126,6 +127,20 @@ export const customContent = {
 Each time the dashboard refreshes, it will attempt to make a screenshot of the website URL you provided. Be aware that it will be displayed in black-and-white on a dashboard with a white background, so ideally you should use some layout that has a white background and is as simple as possible.
 
 The implementation automatically resizes the window frame to fit the side pane and scales the content up by 1.5 times.
+
+### Statistic Tile
+
+You can display a single statistic in a tile below the departures or custom content in the right side pane.
+
+To enable it, set `enabled: true` in `config.ts`:
+
+```
+export const statistic = {
+    enabled: true,
+};
+```
+
+The tile is controlled by `server/src/statistic/statistic.ts` (you can use `statistic-sample.ts` as a template). The sample script fetches the EUR/USD exchange rate. To show a different statistic, edit that file: fetch whatever API you like and call `buildStatisticHtml(title, value)` with the title and value you want displayed.
 
 ### Other configuration options
 
