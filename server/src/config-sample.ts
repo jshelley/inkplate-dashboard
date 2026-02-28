@@ -1,4 +1,4 @@
-import { TransportConfig, WeatherConfig } from './interfaces';
+import { LineGroup, TransportConfig, WeatherConfig } from './interfaces';
 
 // the stops you want to search for (https://v6.bvg.transport.rest/getting-started.html#1-search-for-stops on how to find stops and their ids)
 export const transportConfig: TransportConfig = {
@@ -15,7 +15,11 @@ export const transportConfig: TransportConfig = {
         }
     ],
     // the priority list of lines to show, these lines will appear at the top of the list
-    linePrioList: ['lineA', 'lineC']
+    linePrioList: ['lineA', 'lineC'],
+    // optional: merge multiple lines going the same direction into one departure entry
+    lineGroups: [
+        { lines: ['lineA', 'lineB'], displayName: 'A/B' }
+    ] as LineGroup[]
 };
 
 // whether to show custom content in the side pane with title and url to fetch the content from

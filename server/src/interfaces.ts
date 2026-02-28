@@ -21,9 +21,15 @@ export interface Stop {
     excludeDestinations: string[];
 }
 
+export interface LineGroup {
+    lines: string[];
+    displayName: string;
+}
+
 export interface TransportConfig {
     stops: Stop[];
     linePrioList: string[];
+    lineGroups?: LineGroup[];
 }
 
 // weather-related interfaces

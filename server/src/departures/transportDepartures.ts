@@ -35,7 +35,7 @@ async function getDepartures(): Promise<DepartureLine[]> {
             allDepartures.push(...groupedDepartures);
         }
         console.info(`found ${allDepartures.length} lines, reducing to 6 max`);
-        const res = allDepartures.slice(0, 6);
+        const res = applyLineGroups(allDepartures).slice(0, 6);
         console.info(`all departures: ${allDepartures.map((departure) => `\n${departure.lineName} with ${departure.when.length} departures`)}`)
         return res; // only first 6 items
     } catch (error) {
@@ -100,6 +100,41 @@ function groupAndSortDepartures(departures: Departure[]): DepartureLine[] {
     
     final = priorityItems.concat(nonPriorityItems);
     return final;
+}
+
+function applyLineGroups(departureLines: DepartureLine[]): DepartureLine[] {
+    if (!transportConfig.lineGroups || transportConfig.lineGroups.length === 0) {
+        return departureLines;
+    }
+
+    const processedLineNames = new Set<string>();
+    const result: DepartureLine[] = [];
+
+    for (const group of transportConfig.lineGroups) {
+        const groupLineNames = group.lines.map(l => l.toLowerCase());
+        const matched = departureLines.filter(d => groupLineNames.includes(d.lineName.toLowerCase()));
+        if (matched.length === 0) continue;
+
+        matched.forEach(d => processedLineNames.add(d.lineName.toLowerCase()));
+
+        const mergedWhen = matched.flatMap(d => d.when);
+        mergedWhen.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+        result.push({
+            lineName: group.displayName,
+            lineId: matched[0].lineId,
+            direction: matched[0].direction,
+            when: mergedWhen.slice(0, 4),
+            mode: matched[0].mode,
+        });
+    }
+
+    // append non-grouped lines
+    departureLines
+        .filter(d => !processedLineNames.has(d.lineName.toLowerCase()))
+        .forEach(d => result.push(d));
+
+    return result;
 }
 
 function timeToHour(timeString: string): string {
