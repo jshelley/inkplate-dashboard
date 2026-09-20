@@ -47,6 +47,19 @@ export const weatherConfig: WeatherConfig = {
 export const icalUrls = ["https://url-to-ical-file-here.ics", "another-url.ics"];
 // the news feed rss url
 export const newsFeedUrl = "https://some-rss-feed.com/rss.xml";
+// where the news box gets its content from
+// - "rss": the rss feed above, up to 4 items with title and image
+// - "image": a single image fetched from imageUrl, scaled to fit the news box (about 370 x 430 px)
+// - "api": a json api at apiUrl; itemsPath points to the list (dot separated, empty for the root),
+//   titleField and imageField name the fields of one item (imageField may be empty)
+export const newsSource = {
+    mode: "rss" as "rss" | "image" | "api",
+    imageUrl: "https://url-to-image-here.png",
+    apiUrl: "https://url-to-json-api-here",
+    itemsPath: "items",
+    titleField: "title",
+    imageField: "imageUrl",
+};
 /**
  * The battery voltage thresholds based on which the level is displayed.
  * Make sure to base these on the discharge curve of your battery,

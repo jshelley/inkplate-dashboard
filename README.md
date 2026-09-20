@@ -109,6 +109,26 @@ If you want to use it for a different city, you can customize `transportDepartur
 
 Be aware that the current implementation only supports images through embedding with an `<img>` tag in the `content:encoded` property. Not all RSS feeds do this, so your feed might display without images. You can adapt the implementation in `news.ts`.
 
+### News box: image or JSON API instead of RSS
+
+The news box can also show a single image or items from a JSON API. Set the `mode` in `newsSource` in `config.ts`:
+
+```
+export const newsSource = {
+    mode: "image",
+    // "image": any image url, scaled to fit the news box (about 370 x 430 px), shown in grayscale
+    imageUrl: "https://sample.url/news.png",
+    // "api": a json endpoint; itemsPath points to the list (dot separated, empty for the root),
+    // titleField and imageField name the fields of one item (imageField may be empty)
+    apiUrl: "https://sample.url/news.json",
+    itemsPath: "items",
+    titleField: "title",
+    imageField: "imageUrl",
+};
+```
+
+With `mode: "api"`, a response like `{ "items": [{ "title": "...", "imageUrl": "..." }] }` renders the same list as the RSS mode (the first 4 items). Point `itemsPath` at a nested list with dots, for example `data.stories`. The image is fetched by the browser while rendering, so it has to be reachable from the cloud function without authentication.
+
 ### Custom Content
 
 ![custom content](images/dashboard-custom-content.jpeg)

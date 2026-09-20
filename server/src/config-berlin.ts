@@ -29,6 +29,15 @@ export const weatherConfig: WeatherConfig = {
 export const icalUrls = ["https://calendar.google.com/calendar/ical/en.german%23holiday%40group.v.calendar.google.com/public/basic.ics"]
 
 export const newsFeedUrl = "https://time.com/feed/";
+// where the news box gets its content from ("rss", "image" or "api", see config-sample.ts)
+export const newsSource = {
+    mode: "rss" as "rss" | "image" | "api",
+    imageUrl: "https://url-to-image-here.png",
+    apiUrl: "https://url-to-json-api-here",
+    itemsPath: "items",
+    titleField: "title",
+    imageField: "imageUrl",
+};
 // battery voltage
 export const BATTERY_HIGH = 3.8
 export const BATTERY_MID = 3.6
