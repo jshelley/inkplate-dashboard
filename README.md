@@ -111,23 +111,20 @@ Be aware that the current implementation only supports images through embedding 
 
 ### News box: image or JSON API instead of RSS
 
-The news box can also show a single image or items from a JSON API. Set the `mode` in `newsSource` in `config.ts`:
+The news box can also show a single image or items from a JSON API. Set `mode` and `url` in `newsSource` in `config.ts`:
 
 ```
 export const newsSource = {
-    mode: "image",
-    // "image": any image url, scaled to fit the news box (about 370 x 430 px), shown in grayscale
-    imageUrl: "https://sample.url/news.png",
-    // "api": a json endpoint; itemsPath points to the list (dot separated, empty for the root),
-    // titleField and imageField name the fields of one item (imageField may be empty)
-    apiUrl: "https://sample.url/news.json",
+    mode: "image", // "rss", "image" or "api"
+    url: "https://sample.url/news.png",
+    // api only: the list in the response (dot separated, empty for the root) and the fields of one item
     itemsPath: "items",
     titleField: "title",
     imageField: "imageUrl",
 };
 ```
 
-With `mode: "api"`, a response like `{ "items": [{ "title": "...", "imageUrl": "..." }] }` renders the same list as the RSS mode (the first 4 items). Point `itemsPath` at a nested list with dots, for example `data.stories`. The image is fetched by the browser while rendering, so it has to be reachable from the cloud function without authentication.
+`image` shows the url scaled to fit the news box (about 370 x 430 px) in grayscale. `api` renders a response like `{ "items": [{ "title": "...", "imageUrl": "..." }] }` as the same list as the RSS mode (the first 4 items); point `itemsPath` at a nested list with dots, for example `data.stories`, and leave `imageField` empty for a text-only list. Images are fetched while rendering, so they have to be reachable from the cloud function without authentication.
 
 ### Custom Content
 

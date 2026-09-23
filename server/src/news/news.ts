@@ -1,7 +1,7 @@
 import axios from "axios";
 import Parser from "rss-parser";
 import { NewsItem } from "../interfaces";
-import { newsFeedUrl, newsSource } from "../config";
+import { newsSource } from "../config";
 
 export async function getNewsHtml(): Promise<string> {
     if (newsSource.mode === "image") return getNewsImageHtml();
@@ -27,19 +27,16 @@ function getImageDiv(imageUrl: string) {
     `
 }
 
-/**
- * Image mode: the news box shows a single image fetched from the configured url,
- * scaled to fit the box (grayscale like the rss images).
- */
+// image mode: a single image scaled to fit the news box
 function getNewsImageHtml(): string {
-    if (!newsSource.imageUrl) return `<div class="no-news">No news image configured</div>`;
-    return `<div class="news-image"><img src="${newsSource.imageUrl}"></div>`;
+    if (!newsSource.url) return `<div class="no-news">No news image configured</div>`;
+    return `<div class="news-image"><img src="${newsSource.url}"></div>`;
 }
 
 async function getNewsItems(): Promise<NewsItem[]> {
     let parser = new Parser();
     try {
-        const feed = await parser.parseURL(newsFeedUrl);
+        const feed = await parser.parseURL(newsSource.url);
         return feed.items.slice(0, 4).map(item => {
             return {
                 title: item.title,
@@ -53,14 +50,10 @@ async function getNewsItems(): Promise<NewsItem[]> {
     }
 }
 
-/**
- * Api mode: fetch a json document and read the news items from it. Which list and which
- * fields are used is configured in newsSource (itemsPath, titleField, imageField), so any
- * json api can be used without changing the code.
- */
+// api mode: the news items are read from a json document using itemsPath, titleField and imageField
 async function getApiNewsItems(): Promise<NewsItem[]> {
     try {
-        const response = await axios.get(newsSource.apiUrl, { timeout: 10000 });
+        const response = await axios.get(newsSource.url, { timeout: 10000 });
         const items = getPath(response.data, newsSource.itemsPath);
         if (!Array.isArray(items)) {
             console.error(`News api did not return a list at "${newsSource.itemsPath}"`);
@@ -79,7 +72,10 @@ async function getApiNewsItems(): Promise<NewsItem[]> {
 }
 
 /**
- * Resolve a dot separated path ("data.items") in a json document. An empty path returns the document itself.
+ * Resolve a dot separated path in a json document.
+ * @param data the json document
+ * @param path the path, e.g. "data.items" (empty returns the document itself)
+ * @returns the value at the path or undefined
  */
 function getPath(data: unknown, path: string): unknown {
     if (!path) return data;
@@ -88,6 +84,11 @@ function getPath(data: unknown, path: string): unknown {
     }, data);
 }
 
+/**
+ * Escape html special characters in a text.
+ * @param text the text to escape
+ * @returns the escaped text
+ */
 function escapeHtml(text: string): string {
     return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

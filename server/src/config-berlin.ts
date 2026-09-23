@@ -28,12 +28,10 @@ export const weatherConfig: WeatherConfig = {
 // the calendar ical url to fetch events from
 export const icalUrls = ["https://calendar.google.com/calendar/ical/en.german%23holiday%40group.v.calendar.google.com/public/basic.ics"]
 
-export const newsFeedUrl = "https://time.com/feed/";
-// where the news box gets its content from ("rss", "image" or "api", see config-sample.ts)
+// the news box content ("rss", "image" or "api", see config-sample.ts)
 export const newsSource = {
     mode: "rss" as "rss" | "image" | "api",
-    imageUrl: "https://url-to-image-here.png",
-    apiUrl: "https://url-to-json-api-here",
+    url: "https://time.com/feed/",
     itemsPath: "items",
     titleField: "title",
     imageField: "imageUrl",
